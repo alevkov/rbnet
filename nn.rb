@@ -62,26 +62,25 @@ class Neuron
 
   def sum_derivatives_of_weights(next_layer)
     sum = 0.0
-
     (0...(next_layer.size - 1)).each { |i|
       sum += @output_weights[i] * next_layer.get(i).gradient
     }
-
     sum
   end
 
   def grad_output_layer(val)
     delta = val - @output
-      @gradient = delta * @activation.calc_derivative(@output)
+    @gradient = delta * @activation.calc_derivative(@output)
   end
 
   def grad_hidden_layer(next_layer)
     dow = sum_derivatives_of_weights(next_layer)
-      @gradient = dow * @activation.calc_derivative(@output)
+    @gradient = dow * @activation.calc_derivative(@output)
   end
 
   def update_input_weights(prev_layer)
     (0...prev_layer.size).each { |i|
+      # Calculate weight delta based on gradient. Learning rate `eta` is applied here as well.
       weight_delta = @eta * prev_layer.get(i).output * @gradient
       prev_layer.get(i).output_weights[@idx] += weight_delta
     }
@@ -90,7 +89,7 @@ class Neuron
   def forward(prev_layer)
     sum = 0.0
 
-    # sum the previous output values with weight multiplied
+    # Sum the previous output values with weight multiplied.
     prev_layer.neurons.each do |neuron|
       sum += (neuron.output * neuron.output_weights[@idx])
     end
@@ -122,7 +121,7 @@ class Network
   end
 
   def forward(_X)
-    # Input shape must match shape of input Layer.
+    # Input shape must match shape of input layer.
     if _X.length != @layers[0].size - 1
       puts 'Error! Input shape mismatch.'
       return
@@ -142,20 +141,23 @@ class Network
   end
 
   def backprop(_y)
+    # Calculate gradient for output layer.
     (0...(@layers.last.size - 1)).each { |i|
       @layers.last.get(i).grad_output_layer(_y[i])
     }
 
+    # Calculate gradient for hidden layers.
     i = @layers.length - 2
     while i > 0
 
-      (0...@layers[i].size).each { |j| # hidden
+      (0...@layers[i].size).each { |j|
         @layers[i].get(j).grad_hidden_layer(@layers[i + 1])
       }
 
       i = i.pred
     end
 
+    # Update input weights using calculated gradients.
     i = @layers.length - 1
     while i > 0
 
@@ -170,6 +172,7 @@ class Network
   def fit(_X, _y)
     (0..@epochs).each {
       (0..._X.length).each { |j|
+        # Optimize using SGD.
         forward(_X[j])
         backprop(_y[j])
       }
