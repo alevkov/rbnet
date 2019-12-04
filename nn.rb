@@ -1,4 +1,7 @@
-# Activation function Strategy.
+# ==== Activation Function Strategy
+# 
+#
+# ====
 module ActivationFunctions
   class Tanh
     def self.calc(val)
@@ -19,7 +22,10 @@ module ActivationFunctions
   end
 end
 
-# Layer of Neurons within a Network (1 x N).
+# ==== Layer of Neurons within a Network (1 x N)
+# 
+#
+# ====
 class Layer
   attr_accessor :neurons
 
@@ -40,6 +46,10 @@ class Layer
   end
 end
 
+# ==== Neuron within a dense Network.
+# 
+#
+# ====
 class Neuron
   attr_accessor :output
   attr_accessor :gradient
@@ -88,17 +98,19 @@ class Neuron
 
   def forward(prev_layer)
     sum = 0.0
-
     # Sum the previous output values with weight multiplied.
     prev_layer.neurons.each do |neuron|
       sum += (neuron.output * neuron.output_weights[@idx])
     end
-
     @output = @activation.calc(sum)
   end
 
 end
 
+# ==== Dense Neural Network.
+# 
+#
+# ====
 class Network
   attr_accessor :epochs
 
@@ -199,7 +211,7 @@ class NetworkTester
 
   def main
     # Goal 1: train Network to function as logical gates and observe performance.
-    # Goal 2: compare performance based on Strategy (ActivationFunctions)
+    # Goal 2: compare performance based on Strategy (ActivationFunctions) and shape of Network.
 
     # Network setup
     shape1 = [2, 4, 4, 1] # 2 input, 2 hidden, 1 output
